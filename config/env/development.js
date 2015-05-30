@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/ape-dev',
+	db: 'mongodb://tibal:d1a2s3H@troup.mongohq.com:10085/app22322889',
 	app: {
 		title: 'APE - Development Environment'
 	},

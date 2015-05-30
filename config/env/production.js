@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/ape',
+    db: 'mongodb://tibal:d1a2s3H@troup.mongohq.com:10085/app22322889',
 	assets: {
 		lib: {
 			css: [

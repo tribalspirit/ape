@@ -5,7 +5,7 @@ angular.module('core').service('Menus', [
 
 	function() {
 		// Define a set of default roles
-		this.defaultRoles = ['*'];
+		this.defaultRoles = ['*', 'user', 'editor', 'admin'];
 
 		// Define the menus object
 		this.menus = {};
@@ -161,6 +161,9 @@ angular.module('core').service('Menus', [
 		};
 
 		//Adding the topbar menu
-		this.addMenu('topbar');
+		this.addMenu('topbar', {
+			isPublic: true,
+			roles: ['*']
+		});
 	}
 ]);

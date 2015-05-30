@@ -1,0 +1,19 @@
+<section data-ng-controller="AuthorsController" data-ng-init="find()">
+    <div class="page-header">
+        <h1>Authors</h1>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="author in authors" data-ng-href="#!/authors/{{author._id}}" class="list-group-item">
+			<small class="list-group-item-text">
+				Posted on
+				<span data-ng-bind="author.created | date:'medium'"></span>
+				by
+				<span data-ng-bind="author.user.displayName"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="author.name"></h4>
+        </a>
+    </div>
+    <div class="alert alert-warning text-center" data-ng-hide="!authors.$resolved || authors.length">
+    	No Authors yet, why don't you <a href="/#!/authors/create">create one</a>?
+    </div>
+</section>
