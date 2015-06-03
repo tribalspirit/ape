@@ -1,17 +1,43 @@
 <section data-ng-controller="UsersController" data-ng-init="find()">
     <div class="page-header">
-        <h1>Users</h1>
+        <h1>Manage users</h1>
     </div>
-    <div class="list-group">
-        <a data-ng-repeat="users in users" data-ng-href="#!/users/{{users._id}}" class="list-group-item">
-			<small class="list-group-item-text">
-				Posted on
-				<span data-ng-bind="users.created | date:'medium'"></span>
-				by
-				<span data-ng-bind="users.user.displayName"></span>
-			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="users.firstName"></h4>
-        </a>
-    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="col-lg-2">First name</th>
+                <th class="col-lg-2">Last name</th>
+                <th class="col-lg-2">Username</th>
+                <th class="col-lg-2">email</th>
+                <th class="col-lg-1">Role</th>
+                <th class="col-lg-2">Created</th>
+                <th class="col-lg-1"></th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+        <tr data-ng-repeat="users in users">
+
+
+            <td data-ng-bind="users.firstName"></td>
+            <td data-ng-bind="users.lastName"></td>
+            <td data-ng-bind="users.username"></td>
+            <td data-ng-bind="users.email"></td>
+            <td data-ng-bind="users.roles"></td>
+            <td data-ng-bind="users.created | date:'medium'"></td>
+            <td><a data-ng-href="#!/users/{{users._id}}">Edit</a></td>
+
+
+
+
+        </tr>
+        </tbody>
+
+    </table>
+
+
 
 </section>
