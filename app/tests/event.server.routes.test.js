@@ -5,13 +5,13 @@ var should = require('should'),
 	app = require('../../server'),
 	mongoose = require('mongoose'),
 	User = mongoose.model('User'),
-	Event = mongoose.model('Event'),
+	Conference = mongoose.model('Conference'),
 	agent = request.agent(app);
 
 /**
  * Globals
  */
-var credentials, user, event;
+var credentials, user, conference;
 
 /**
  * Event routes tests
@@ -37,7 +37,7 @@ describe('Event CRUD tests', function() {
 
 		// Save a user to the test db and create new Event
 		user.save(function() {
-			event = {
+			conference = {
 				name: 'Event Name'
 			};
 
@@ -58,7 +58,7 @@ describe('Event CRUD tests', function() {
 
 				// Save a new Event
 				agent.post('/events')
-					.send(event)
+					.send(conference)
 					.expect(200)
 					.end(function(eventSaveErr, eventSaveRes) {
 						// Handle Event save error
@@ -71,11 +71,11 @@ describe('Event CRUD tests', function() {
 								if (eventsGetErr) done(eventsGetErr);
 
 								// Get Events list
-								var events = eventsGetRes.body;
+								var conferences = eventsGetRes.body;
 
 								// Set assertions
-								(events[0].user._id).should.equal(userId);
-								(events[0].name).should.match('Event Name');
+								(conferences[0].user._id).should.equal(userId);
+								(conferences[0].name).should.match('Event Name');
 
 								// Call the assertion callback
 								done();
@@ -86,7 +86,7 @@ describe('Event CRUD tests', function() {
 
 	it('should not be able to save Event instance if not logged in', function(done) {
 		agent.post('/events')
-			.send(event)
+			.send(conference)
 			.expect(401)
 			.end(function(eventSaveErr, eventSaveRes) {
 				// Call the assertion callback
@@ -96,7 +96,7 @@ describe('Event CRUD tests', function() {
 
 	it('should not be able to save Event instance if no name is provided', function(done) {
 		// Invalidate name field
-		event.name = '';
+		conference.name = '';
 
 		agent.post('/auth/signin')
 			.send(credentials)
@@ -110,7 +110,7 @@ describe('Event CRUD tests', function() {
 
 				// Save a new Event
 				agent.post('/events')
-					.send(event)
+					.send(conference)
 					.expect(400)
 					.end(function(eventSaveErr, eventSaveRes) {
 						// Set message assertion
@@ -135,18 +135,18 @@ describe('Event CRUD tests', function() {
 
 				// Save a new Event
 				agent.post('/events')
-					.send(event)
+					.send(conference)
 					.expect(200)
 					.end(function(eventSaveErr, eventSaveRes) {
 						// Handle Event save error
 						if (eventSaveErr) done(eventSaveErr);
 
 						// Update Event name
-						event.name = 'WHY YOU GOTTA BE SO MEAN?';
+						conference.name = 'WHY YOU GOTTA BE SO MEAN?';
 
 						// Update existing Event
 						agent.put('/events/' + eventSaveRes.body._id)
-							.send(event)
+							.send(conference)
 							.expect(200)
 							.end(function(eventUpdateErr, eventUpdateRes) {
 								// Handle Event update error
@@ -165,7 +165,7 @@ describe('Event CRUD tests', function() {
 
 	it('should be able to get a list of Events if not signed in', function(done) {
 		// Create new Event model instance
-		var eventObj = new Event(event);
+		var eventObj = new Conference(conference);
 
 		// Save the Event
 		eventObj.save(function() {
@@ -185,14 +185,14 @@ describe('Event CRUD tests', function() {
 
 	it('should be able to get a single Event if not signed in', function(done) {
 		// Create new Event model instance
-		var eventObj = new Event(event);
+		var eventObj = new Conference(conference);
 
 		// Save the Event
 		eventObj.save(function() {
 			request(app).get('/events/' + eventObj._id)
 				.end(function(req, res) {
 					// Set assertion
-					res.body.should.be.an.Object.with.property('name', event.name);
+					res.body.should.be.an.Object.with.property('name', conference.name);
 
 					// Call the assertion callback
 					done();
@@ -213,7 +213,7 @@ describe('Event CRUD tests', function() {
 
 				// Save a new Event
 				agent.post('/events')
-					.send(event)
+					.send(conference)
 					.expect(200)
 					.end(function(eventSaveErr, eventSaveRes) {
 						// Handle Event save error
@@ -221,7 +221,7 @@ describe('Event CRUD tests', function() {
 
 						// Delete existing Event
 						agent.delete('/events/' + eventSaveRes.body._id)
-							.send(event)
+							.send(conference)
 							.expect(200)
 							.end(function(eventDeleteErr, eventDeleteRes) {
 								// Handle Event error error
@@ -239,10 +239,10 @@ describe('Event CRUD tests', function() {
 
 	it('should not be able to delete Event instance if not signed in', function(done) {
 		// Set Event user 
-		event.user = user;
+		conference.user = user;
 
 		// Create new Event model instance
-		var eventObj = new Event(event);
+		var eventObj = new Conference(conference);
 
 		// Save the Event
 		eventObj.save(function() {
@@ -262,7 +262,7 @@ describe('Event CRUD tests', function() {
 
 	afterEach(function(done) {
 		User.remove().exec();
-		Event.remove().exec();
+		Conference.remove().exec();
 		done();
 	});
 });

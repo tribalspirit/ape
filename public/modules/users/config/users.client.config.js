@@ -28,3 +28,12 @@ angular.module('users').config(['$httpProvider',
 		]);
 	}
 ]);
+
+angular.module('users').run(['Menus',
+	function(Menus) {
+		// Set top bar menu items
+		Menus.addMenuItem('topbar', 'Users', 'users', 'dropdown', '/users(/create)?', false, ['user', 'admin']);
+		Menus.addSubMenuItem('topbar', 'users', 'Manage Users', 'users', false, ['admin']);
+		Menus.addSubMenuItem('topbar', 'users', 'New User', 'users/create', false, ['admin']);
+	}
+]);

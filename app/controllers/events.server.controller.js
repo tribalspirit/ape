@@ -5,23 +5,23 @@
  */
 var mongoose = require('mongoose'),
 	errorHandler = require('./errors.server.controller'),
-	Event = mongoose.model('Event'),
+	Conference = mongoose.model('Conference'),
 	_ = require('lodash');
 
 /**
- * Create a Event
+ * Create a conference
  */
 exports.create = function(req, res) {
-	var event = new Event(req.body);
-	event.user = req.user;
+	var conference = new Conference(req.body);
+	conference.user = req.user;
 
-	event.save(function(err) {
+	conference.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(event);
+			res.jsonp(conference);
 		}
 	});
 };
@@ -30,24 +30,24 @@ exports.create = function(req, res) {
  * Show the current Event
  */
 exports.read = function(req, res) {
-	res.jsonp(req.event);
+	res.jsonp(req.conference);
 };
 
 /**
  * Update a Event
  */
 exports.update = function(req, res) {
-	var event = req.event ;
+	var conference = req.conference ;
 
-	event = _.extend(event , req.body);
+	conference = _.extend(conference , req.body);
 
-	event.save(function(err) {
+	conference.save(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(event);
+			res.jsonp(conference);
 		}
 	});
 };
@@ -56,15 +56,15 @@ exports.update = function(req, res) {
  * Delete an Event
  */
 exports.delete = function(req, res) {
-	var event = req.event ;
+	var conference = req.conference ;
 
-	event.remove(function(err) {
+	conference.remove(function(err) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(event);
+			res.jsonp(conference);
 		}
 	});
 };
@@ -72,14 +72,14 @@ exports.delete = function(req, res) {
 /**
  * List of Events
  */
-exports.list = function(req, res) { 
-	Event.find().sort('-created').populate('user', 'displayName').exec(function(err, events) {
+exports.list = function(req, res) {
+	Conference.find().sort('-created').populate('user', 'displayName').exec(function(err, conferences) {
 		if (err) {
 			return res.status(400).send({
 				message: errorHandler.getErrorMessage(err)
 			});
 		} else {
-			res.jsonp(events);
+			res.jsonp(conferences);
 		}
 	});
 };
@@ -88,10 +88,10 @@ exports.list = function(req, res) {
  * Event middleware
  */
 exports.eventByID = function(req, res, next, id) { 
-	Event.findById(id).populate('user', 'displayName').exec(function(err, event) {
+	Event.findById(id).populate('user', 'displayName').exec(function(err, conference) {
 		if (err) return next(err);
-		if (! event) return next(new Error('Failed to load Event ' + id));
-		req.event = event ;
+		if (! conference) return next(new Error('Failed to load Event ' + id));
+		req.conference = conference ;
 		next();
 	});
 };
@@ -100,7 +100,7 @@ exports.eventByID = function(req, res, next, id) {
  * Event authorization middleware
  */
 exports.hasAuthorization = function(req, res, next) {
-	if (req.event.user.id !== req.user.id) {
+	if (req.conference.user.id !== req.user.id) {
 		return res.status(403).send('User is not authorized');
 	}
 	next();

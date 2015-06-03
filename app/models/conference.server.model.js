@@ -9,7 +9,7 @@ var mongoose = require('mongoose'),
 /**
  * Event Schema
  */
-var EventSchema = new Schema({
+var ConferenceSchema = new Schema({
 	name: {
 		type: String,
 		default: '',
@@ -26,4 +26,4 @@ var EventSchema = new Schema({
 	}
 });
 
-mongoose.model('Event', EventSchema);
+mongoose.model('Conference', ConferenceSchema);

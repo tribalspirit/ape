@@ -6,12 +6,12 @@
 var should = require('should'),
 	mongoose = require('mongoose'),
 	User = mongoose.model('User'),
-	Event = mongoose.model('Event');
+	Conference = mongoose.model('Conference');
 
 /**
  * Globals
  */
-var user, event;
+var user, conference;
 
 /**
  * Unit tests
@@ -27,8 +27,8 @@ describe('Event Model Unit Tests:', function() {
 			password: 'password'
 		});
 
-		user.save(function() { 
-			event = new Event({
+		user.save(function() {
+			conference = new Conference({
 				name: 'Event Name',
 				user: user
 			});
@@ -39,24 +39,24 @@ describe('Event Model Unit Tests:', function() {
 
 	describe('Method Save', function() {
 		it('should be able to save without problems', function(done) {
-			return event.save(function(err) {
+			return conference.save(function(err) {
 				should.not.exist(err);
 				done();
 			});
 		});
 
-		it('should be able to show an error when try to save without name', function(done) { 
-			event.name = '';
+		it('should be able to show an error when try to save without name', function(done) {
+			conference.name = '';
 
-			return event.save(function(err) {
+			return conference.save(function(err) {
 				should.exist(err);
 				done();
 			});
 		});
 	});
 
-	afterEach(function(done) { 
-		Event.remove().exec();
+	afterEach(function(done) {
+		Conference.remove().exec();
 		User.remove().exec();
 
 		done();
