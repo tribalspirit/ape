@@ -4,7 +4,7 @@
 var ApplicationConfiguration = (function() {
 	// Init module configuration options
 	var applicationModuleName = 'ape';
-	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', 'ui.utils'];
+	var applicationModuleVendorDependencies = ['ngResource', 'ngCookies',  'ngAnimate',  'ngTouch',  'ngSanitize',  'ui.router', 'ui.bootstrap', '_', 'ui.utils'];
 
 	// Add a new vertical module
 	var registerModule = function(moduleName, dependencies) {
@@ -21,6 +21,7 @@ var ApplicationConfiguration = (function() {
 		registerModule: registerModule
 	};
 })();
+
 'use strict';
 
 //Start by defining the main module and adding the module dependencies
@@ -900,9 +901,9 @@ angular.module('users').config(['$httpProvider',
 angular.module('users').run(['Menus',
 	function(Menus) {
 		// Set top bar menu items
-		Menus.addMenuItem('topbar', 'Users', 'users', 'dropdown', '/users(/create)?', true);
-		Menus.addSubMenuItem('topbar', 'users', 'Manage Users', 'users', false, ['user', 'editor', 'admin']);
-		Menus.addSubMenuItem('topbar', 'users', 'New User', 'users/create', false, ['user', 'editor', 'admin']);
+		Menus.addMenuItem('topbar', 'Users', 'users', 'dropdown', '/users(/create)?', false, ['user', 'admin']);
+		Menus.addSubMenuItem('topbar', 'users', 'Manage Users', 'users', false, ['admin']);
+		Menus.addSubMenuItem('topbar', 'users', 'New User', 'users/create', false, ['admin']);
 	}
 ]);
 
@@ -958,11 +959,11 @@ angular.module('users').config(['$stateProvider',
                 templateUrl: 'modules/users/views/create-users.client.view.html'
             }).
             state('viewUsers', {
-                url: '/users/:usersId',
+                url: '/users/:userId',
                 templateUrl: 'modules/users/views/view-users.client.view.html'
             }).
             state('editUsers', {
-                url: '/users/:usersId/edit',
+                url: '/users/:userId/edit',
                 templateUrl: 'modules/users/views/edit-users.client.view.html'
             });
     }
@@ -1119,66 +1120,84 @@ angular.module('users').controller('SettingsController', ['$scope', '$http', '$l
 ]);
 'use strict';
 
-angular.module('users').controller('UsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Users',
-	function($scope, $stateParams, $location, Authentication, Users) {
-		$scope.authentication = Authentication;
+angular.module('users').controller('UsersController', ['$scope', '$stateParams', '$location', 'Authentication', 'Users', '_',
+    function ($scope, $stateParams, $location, Authentication, Users, _) {
+        $scope.authentication = Authentication;
 
-		$scope.create = function() {
-			var user = new Users({
-				firstName: this.firstName,
-				lastName: this.lastName,
-				displayName: this.displayName,
-				email: this.email,
-				role: this.role
+        var roles = ['user', 'editor', 'admin'];
 
-			});
+        $scope.selectedRole = '';
 
-			user.$save(function(response) {
-				$location.path('users/' + response._id);
 
-				$scope.title = '';
-				$scope.content = '';
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+        $scope.availableRoles = function () {
+            return _.difference(roles, $scope.user.roles);
+        };
 
-		$scope.remove = function(user) {
-			if (user) {
-				user.$remove();
+        $scope.addRole = function (role) {
+            $scope.user.roles.push(role);
+        };
 
-				for (var i in $scope.users) {
-					if ($scope.users[i] === user) {
-						$scope.users.splice(i, 1);
-					}
-				}
-			} else {
-				$scope.user.$remove(function() {
-					$location.path('users');
-				});
-			}
-		};
+        $scope.create = function () {
+            var user = new Users({
+                firstName: this.firstName,
+                lastName: this.lastName,
+                displayName: this.displayName,
+                email: this.email,
+                role: this.role
 
-		$scope.update = function() {
-			var user = $scope.user;
+            });
 
-			user.$update(function() {
-				$location.path('users/' + user._id);
-			}, function(errorResponse) {
-				$scope.error = errorResponse.data.message;
-			});
-		};
+            user.$save(function (response) {
+                $location.path('users/' + response._id);
 
-		$scope.find = function() {
-			$scope.users = Users.query();
-		};
+                $scope.title = '';
+                $scope.content = '';
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
 
-		$scope.findOne = function() {
-			$scope.user = Users.get({
-				userId: $stateParams.userId
-			});
-		};
-	}
+        $scope.remove = function (user) {
+            if (user) {
+                user.$remove();
+
+                for (var i in $scope.users) {
+                    if ($scope.users[i] === user) {
+                        $scope.users.splice(i, 1);
+                    }
+                }
+            } else {
+                $scope.user.$remove(function () {
+                    $location.path('users');
+                });
+            }
+        };
+
+        $scope.update = function () {
+            var user = $scope.user;
+
+            user.$update(function () {
+                $location.path('users/' + user._id);
+            }, function (errorResponse) {
+                $scope.error = errorResponse.data.message;
+            });
+        };
+
+        $scope.find = function () {
+            $scope.users = Users.query();
+        };
+
+        $scope.findOne = function () {
+            $scope.user = Users.get({
+                userId: $stateParams.userId
+            });
+
+            if ($scope.availableRoles().length > 0) {
+                $scope.selectedRole = $scope.availableRoles()[0];
+            }
+
+        };
+    }
 ]);
 
 'use strict';
@@ -1200,7 +1219,7 @@ angular.module('users').factory('Authentication', [
 // Users service used for communicating with the users REST endpoint
 angular.module('users').factory('Users', ['$resource',
 	function($resource) {
-		return $resource('users', {}, {
+		return $resource('users/:userId', {userId: '@_id'}, {
 			update: {
 				method: 'PUT'
 			}

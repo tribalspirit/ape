@@ -50,11 +50,11 @@ angular.module('users').config(['$stateProvider',
                 templateUrl: 'modules/users/views/create-users.client.view.html'
             }).
             state('viewUsers', {
-                url: '/users/:usersId',
+                url: '/users/:userId',
                 templateUrl: 'modules/users/views/view-users.client.view.html'
             }).
             state('editUsers', {
-                url: '/users/:usersId/edit',
+                url: '/users/:userId/edit',
                 templateUrl: 'modules/users/views/edit-users.client.view.html'
             });
     }

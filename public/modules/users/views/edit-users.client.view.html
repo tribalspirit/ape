@@ -1,22 +1,73 @@
-<section data-ng-controller="NewsController" data-ng-init="findOne()">
+<section data-ng-controller="UsersController" data-ng-init="findOne()">
     <div class="page-header">
-        <h1>Edit News</h1>
+        <h1>Edit User</h1>
     </div>
-    <div class="col-md-12">
+
+    <div class="col-md-4">
         <form class="form-horizontal" data-ng-submit="update()" novalidate>
             <fieldset>
                 <div class="form-group">
-                    <label class="control-label" for="name">Name</label>
+                    <label class="control-label" for="firstName">First Name</label>
+
                     <div class="controls">
-                        <input type="text" data-ng-model="news.name" id="name" class="form-control" placeholder="Name" required>
+                        <input type="text" data-ng-model="user.firstName" id="firstName" class="form-control"
+                               placeholder="First Name" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
-                </div>
-				<div data-ng-show="error" class="text-danger">
-					<strong data-ng-bind="error"></strong>
-				</div>
+
+
+                    <label class="control-label" for="lastName">Last Name</label>
+
+                    <div class="controls">
+                        <input type="text" data-ng-model="user.lastName" id="lastName" class="form-control"
+                               placeholder="Last Name" required>
+                    </div>
+
+                    <label class="control-label" for="username">Username</label>
+
+                    <div class="controls">
+                        <input type="text" data-ng-model="user.username" id="username" class="form-control"
+                               placeholder="Userame" required>
+                    </div>
+
+                    <label class="control-label" for="email">Email</label>
+
+                    <div class="controls">
+                        <input type="text" data-ng-model="user.email" id="email" class="form-control"
+                               placeholder="email@domain.com" required>
+                    </div>
+
+                    <label class="control-label" for="roles">Access rights</label>
+
+                    <div class="controls">
+
+
+                            <div data-ng-repeat="role in user.roles">
+                                <span data-ng-bind="role"></span>
+                                <a class="btn btn-primary" data-ng-click="removeRole($index)" ng-if="user.roles.length > 1">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            </div>
+                        </>
+
+                        <div ng-if = "availableRoles.length > 0">
+                        <h4>Add role:</h4>
+
+
+                        <select type="text" data-ng-model="selectedRole" id="roles" class="form-control" data-ng-options="r for r in availableRoles" data-ng-init="availableRoles[0]">
+
+                        </select>
+
+                        <button class="button add-button" data-ng-click="addRole(selectedRole)">Add</button>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <input type="submit" value="Update" class="btn btn-default">
+                    </div>
+                    <div data-ng-show="error" class="text-danger">
+                        <strong data-ng-bind="error"></strong>
+                    </div>
             </fieldset>
         </form>
     </div>

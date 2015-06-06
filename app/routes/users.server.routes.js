@@ -15,6 +15,14 @@ module.exports = function(app) {
 	app.route('/users').put(users.update);
 	app.route('/users/accounts').delete(users.removeOAuthProvider);
 
+	app.route('/users/:userId')
+		.get(users.read)
+		.put(users.requiresLogin, users.hasAuthorization, users.update)
+		.delete(users.requiresLogin, users.hasAuthorization, users.delete);
+
+	// Finish by binding the article middleware
+	app.param('userId', users.userByID);
+
 	// Setting up the users password api
 	app.route('/users/password').post(users.changePassword);
 	app.route('/auth/forgot').post(users.forgot);
